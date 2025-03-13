@@ -10,16 +10,4 @@ export const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full',
   },
-  {
-    path: 'login',
-    loadComponent: () => import('./login/login.page').then( m => m.LoginPage)
-  },
-  {
-    path: 'sign-up',
-    loadComponent: () => import('./sign-up/sign-up.page').then( m => m.SignUpPage)
-  },
-  {
-    path: 'logout',
-    loadComponent: () => import('./logout/logout.page').then( m => m.LogoutPage)
-  },
 ];

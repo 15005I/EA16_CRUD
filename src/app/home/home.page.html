@@ -1,27 +1,21 @@
 <ion-content [fullscreen]="true">
-  <div style="height: 100vh; background-color: rgb(0, 0, 0);">
+  <div style="height: 100vh; background-color: rgb(122, 122, 122);">
     <header style="background-color: rgb(0, 0, 0); padding: 20px;">
       <h1 class="ion-text-center" style="color: rgb(255, 255, 255);">Lista de tareas</h1>
     </header>
     <br>
-    <form [formGroup]="tarea" (ngSubmit)="nTarea()">
-      <ion-item>
-        <ion-label>Nombre:</ion-label>
-        <ion-input formControlName="nombre"></ion-input>
-      </ion-item>
-      <ion-label color="danger" *ngIf="tarea.controls.nombre.errors?.['required'] && (tarea.touched || tarea.dirty)">* El nombre es obligatorio </ion-label>
-      <ion-item>
-        <ion-label>Fecha:</ion-label>
-        <ion-input formControlName="fecha" type="datetime-local"></ion-input>
-      </ion-item>
-      <ion-label color="danger" *ngIf="tarea.controls.fecha.errors?.['required'] && (tarea.touched || tarea.dirty)">* La fecha es obligatoria </ion-label>
-      <ion-item>
-        <ion-label>Descripcion:</ion-label>
-        <ion-input formControlName="descripcion"></ion-input>
-      </ion-item>
-      <p class="ion-text-center">
-        <ion-button type="submit" [disabled]="!tarea.valid">Añadir tarea</ion-button>
-      </p>
+    <form (ngSubmit)="addTask(description)" #form="ngForm">
+      <div>
+        <label for="name">Name</label>
+        <input id="name" name="name" [(ngModel)]="name" required #nameInput="ngModel">
+        <div *ngIf="nameInput.invalid && nameInput.touched" style="color: red;">Please enter a Name.</div>
+      </div>
+      <div>
+        <label for="description">Descripcion</label>
+        <input id="description" name="description" [(ngModel)]="description" required #descriptionInput="ngModel">
+        <div *ngIf="descriptionInput.invalid && descriptionInput.touched" style="color: red;">Please enter a description.</div>
+      </div>
+      <button type="submit" [disabled]="form.invalid">Nueva tarea</button>
     </form>
     <br><br><br>
     <div class="container" style="background-color: rgb(141, 141, 141);">
@@ -30,17 +24,19 @@
           <tr>
             <th style="border: 1px solid black; padding: 8px;">Nombre</th>
             <th style="border: 1px solid black; padding: 8px;">Descripcion</th>
-            <th style="border: 1px solid black; padding: 8px;">Fecha</th>
             <th style="border: 1px solid black; padding: 8px;">Completada</th>
+            <th style="border: 1px solid black; padding: 8px;">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let tarea of tareas">
-            <td style="border: 1px solid black; padding: 8px;">{{ tarea.nombre }}</td>
-            <td style="border: 1px solid black; padding: 8px;">{{ tarea.descripcion }}</td>
-            <td style="border: 1px solid black; padding: 8px;">{{ tarea.fecha }}</td>
+          <tr *ngFor="let task of tasks$ | async">
+            <td style="border: 1px solid black; padding: 8px;">{{ task.name }}</td>
+            <td style="border: 1px solid black; padding: 8px;">{{ task.description }}</td>
             <td style="border: 1px solid black; padding: 8px;">
-              <ion-checkbox style="width: 140px;"></ion-checkbox>
+              <ion-checkbox [(ngModel)]="task.completed" (ionChange)="updateTask(task.id, task.completed)"></ion-checkbox>
+            </td>
+            <td style="border: 1px solid black; padding: 8px;">
+              <button (click)="deleteTask(task.id)">Eliminar</button>
             </td>
           </tr>
         </tbody>
